@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.answers {
+  position: absolute;
+  background-color: white;
+  color: black;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 15px;
+  column-gap: 10px;
+}
+
+.game-panel {
+  position: relative;
+}
+
+img.bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+canvas {
+  width: 100%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+canvas {
+  border: 2px solid black;
+}
+
+body {
+  background-color: black;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../resources/images/background.jpg");
+  backdrop-filter: blur(10px);
+}
+
+.draggable {
+  background-color: white;
+}
