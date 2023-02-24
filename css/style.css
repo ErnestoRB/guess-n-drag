@@ -3,6 +3,15 @@
   box-sizing: border-box;
 }
 
+.score {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: "Kanit";
+  font-size: large;
+  background-color: aliceblue;
+  padding: 5px;
+}
 .answers {
   position: absolute;
   background-color: white;

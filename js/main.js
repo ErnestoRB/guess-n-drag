@@ -10,16 +10,13 @@ class Animal {
   }
 
   /**
-   *
-   * @param {number} width Ancho del canvas
-   * @param {number} height Altura del canvas
    * @returns {{ x: number, y: number}} Posición en la que se puede dibujar el canvas. No garantiza que no se solape con otro objeto.
    */
-  calcularPosicion(width, height) {
+  calcularPosicion() {
     const posicion = {
-      x: Math.round(Math.min(width - 300, Math.max(Math.random() * width, 0))),
+      x: Math.round(Math.min(CANVAS_WIDTH - 300, Math.random() * CANVAS_WIDTH)),
       y: Math.round(
-        Math.min(height - 300, Math.max(0, Math.random() * height))
+        Math.min(CANVAS_HEIGHT - 300, Math.random() * CANVAS_HEIGHT)
       ),
     };
     this.posicion = posicion;
@@ -124,8 +121,18 @@ const GAME_MANAGER = new (class GameManager {
     VIEW_MANAGER.createView(
       "Juego",
       () => {
+        let puntuacion = 0;
         const root = document.createElement("div");
         root.className = "flex relative";
+        const scoreElement = document.createElement("span");
+        scoreElement.className = "score";
+        root.appendChild(scoreElement);
+
+        function renderPuntuacion() {
+          scoreElement.innerText = `Puntuación: ${puntuacion}`;
+        }
+
+        renderPuntuacion();
         const canvas = document.createElement("canvas");
         const answerBox = document.createElement("div");
         answerBox.className = "answers";
@@ -150,7 +157,6 @@ const GAME_MANAGER = new (class GameManager {
         // dibujar animales
         this.animales.forEach((animal) => {
           // que cada uno tenga una posición distinta
-
           while (
             !animal.posicion ||
             this.animales.some(
@@ -160,7 +166,7 @@ const GAME_MANAGER = new (class GameManager {
                 isOverlapping(animal.posicion, otroAnimal.posicion)
             )
           ) {
-            animal.calcularPosicion(canvas.width, canvas.height);
+            animal.calcularPosicion();
           }
 
           const draggable = document.createElement("div");
@@ -195,10 +201,11 @@ const GAME_MANAGER = new (class GameManager {
             return;
           }
           if (animal.nombre == data) {
-            console.log("Acertaste! :)");
+            puntuacion += 100;
           } else {
-            console.log("Fallaste! :)");
+            puntuacion -= 50;
           }
+          renderPuntuacion();
         };
         canvas.ondragenter = (event) => {
           event.preventDefault();
@@ -207,7 +214,6 @@ const GAME_MANAGER = new (class GameManager {
           event.preventDefault();
         };
         root.append(canvas);
-
         return root;
       },
       { renderOnChange: true }
