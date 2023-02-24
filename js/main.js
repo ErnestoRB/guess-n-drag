@@ -6,6 +6,7 @@ class Animal {
     this.nombre = nombre;
     this.img = img;
     this.audio = audio;
+    this.solucionado = false;
     this.posicion = undefined;
   }
 
@@ -123,10 +124,16 @@ const GAME_MANAGER = new (class GameManager {
       () => {
         let puntuacion = 0;
         const root = document.createElement("div");
-        root.className = "flex relative";
+        root.className = "fondo-juego";
+        const blur = document.createElement("div");
+        blur.className = "blurred";
+        const container = document.createElement("div");
+        root.append(blur);
+        blur.append(container);
+        container.className = "flex relative";
         const scoreElement = document.createElement("span");
         scoreElement.className = "score";
-        root.appendChild(scoreElement);
+        container.appendChild(scoreElement);
 
         function renderPuntuacion() {
           scoreElement.innerText = `Puntuación: ${puntuacion}`;
@@ -143,7 +150,7 @@ const GAME_MANAGER = new (class GameManager {
           );
         }
 
-        root.append(answerBox);
+        container.append(answerBox);
         // tamaño del lienzo (canvas). es distinto al tamaño real en el viewport
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -200,7 +207,11 @@ const GAME_MANAGER = new (class GameManager {
           if (!animal) {
             return;
           }
+          if (animal.solucionado) {
+            return;
+          }
           if (animal.nombre == data) {
+            animal.solucionado = true;
             puntuacion += 100;
           } else {
             puntuacion -= 50;
@@ -213,7 +224,7 @@ const GAME_MANAGER = new (class GameManager {
         canvas.ondragover = (event) => {
           event.preventDefault();
         };
-        root.append(canvas);
+        container.append(canvas);
         return root;
       },
       { renderOnChange: true }
