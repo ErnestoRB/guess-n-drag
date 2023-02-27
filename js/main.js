@@ -5,8 +5,9 @@ class Animal {
   constructor(nombre, img, audio) {
     this.nombre = nombre;
     this.img = img;
-    this.audio = audio;
+    this.audio = new Audio(audio);
     this.posicion = undefined;
+    Audio.play();
   }
 
   /**
