@@ -1,0 +1,30 @@
+{
+  "name": "guess-n-drag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "wp-scripts build js/index.js --output-path=dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErnestoRB/guess-n-drag.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ErnestoRB/guess-n-drag/issues"
+  },
+  "homepage": "https://github.com/ErnestoRB/guess-n-drag#readme",
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "js-confetti": "^0.11.0",
+    "lodash": "^4.17.21"
+  }
+}

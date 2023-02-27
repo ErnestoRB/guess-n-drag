@@ -1,0 +1,6 @@
+COMO GENERAR ARCHIVO PARA USAR LIBRERIA JSConfetti
+1.- Correr npm install para instalar las dependencias
+2.- (Antes de ejecutar npx webpack puedes hacer los cambios que quieras en src/index.js)  Ejecutar npx webpack
+3.- Veras que se genero dentro del directorio dist el archivo main.js que contiene un archivo que deberas importar en tu archivo html <script src="main.js"></script>
+
+Despues de estos pasos puedes abrir tu archivo html en el navegador y veras el codigo funcionar
