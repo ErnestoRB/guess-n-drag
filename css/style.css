@@ -1,8 +1,46 @@
+:root{
+  --base-red: #f65247;
+  --base-orange: #f0ad28;
+  --base-yellow: #f4dd39;
+  --base-green: #a5cb42;
+  --base-blue: #51afe5;
+  --base-purple: #565baf;
+
+  --light-red: #f76359;
+  --light-orange: #f2b53e;
+  --light-yellow: #f5e04d;
+  --light-green: #aed055;
+  --light-blue: #62b7e8;
+  --light-purple: #676bb7;
+
+  --dark-red: #dd4a40;
+  --dark-orange: #d89c24;
+  --dark-yellow: #dcc733;
+  --dark-green: #95b73b;
+  --dark-blue: #499ece;
+  --dark-purple: #4d529e;
+
+  --font: 'GoodDog Plain';
+}
 * {
   margin: 0;
   box-sizing: border-box;
+  font-family: 'Urbanist', sans-serif;
 }
 
+.intro{
+  border: none;
+}
+
+.score {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: "Kanit";
+  font-size: large;
+  background-color: aliceblue;
+  padding: 5px;
+}
 .answers {
   position: absolute;
   background-color: white;
@@ -14,7 +52,7 @@
 }
 
 .red {
-  background-color: red;
+  background-color: var(--light-red);
 }
 
 .game-panel {
@@ -53,17 +91,77 @@ canvas {
   border: 2px solid black;
 }
 
-body {
-  background-color: black;
-  display: grid;
-  place-items: center;
+.fondo-juego {
   width: 100vw;
   height: 100vh;
   background-image: url("../resources/images/background.jpg");
   background-size: cover;
+  backdrop-filter: blur(5px);
+}
+
+.blurred {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.309);
   backdrop-filter: blur(10px);
+}
+
+.buttons{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+}
+
+.introButton{
+  font-family: var(--font);
+  padding: 10px;
+  margin: 15px;
+  font-size: 20px;
+  border: 2px solid black;
+  background-color: var(--base-red);
+  cursor: pointer;
+}
+
+.animated{
+  animation-name: colors;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes colors{
+  0%{
+    background-color: var(--base-red);
+  }
+
+  25%{
+    background-color: var(--base-yellow);
+  }
+
+  50%{
+    background-color: var(--base-green);
+  }
+
+  75%{
+    background-color: var(--base-blue);
+  }
+
+  100%{
+    background-color: var(--base-red);
+  }
+}
+
+.introButton:hover{
+  background-color: var(--dark-blue);
 }
 
 .draggable {
   background-color: white;
+}
+
+@font-face {
+  font-family: 'GoodDog Plain';
+  src: url('../resources/fonts/GOODDP__.TTF');
 }
