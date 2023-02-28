@@ -257,7 +257,97 @@ const GAME_MANAGER = new (class GameManager {
       },
       { renderOnChange: true }
     );
-    VIEW_MANAGER.changeToView("Juego");
+
+    VIEW_MANAGER.createView(
+      "Intro",
+      () => {
+        const root = document.createElement("div");
+
+        const bgmusic = document.createElement("audio");
+        bgmusic.src = "resources/music/No More Glow - Gilttering (Shortened Version).mp3";
+        bgmusic.volume = 0.5;
+        bgmusic.loop = true;
+        root.append(bgmusic);
+
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("width", 1000);
+        canvas.setAttribute("height", 400);
+
+        canvas.className = "intro";
+        var ctx = canvas.getContext("2d");
+
+        var lion = new Image();
+        lion.src = "resources/images/lion.png";
+        lion.onload = function(){
+          ctx.drawImage(lion, 200, 200, 200, 200);
+        }
+
+        var tiger = new Image();
+        tiger.src = "resources/images/tiger.png";
+        tiger.onload = function(){
+          ctx.drawImage(tiger, 600, 200, 200, 200);
+        }
+
+        var img = new Image();
+        img.src = "resources/images/logo1.png";
+        img.onload = function(){
+          ctx.drawImage(img, 100, 0, 800, 400);
+        }
+        
+
+        root.append(canvas);
+
+        const buttons = document.createElement("div");
+        buttons.className = "buttons";
+
+        var button = document.createElement("button");
+        button.className = "introButton animated";
+        button.innerHTML = "Jugar"; //cambiar a captura de alias
+        button.onclick = function(){
+          VIEW_MANAGER.changeToView('Juego');
+        }
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Creditos";
+        button.onclick = function(){
+          VIEW_MANAGER.changeToView('Creditos');
+        }
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Jugadores";
+        button.onclick = function(){
+          VIEW_MANAGER.changeToView('');
+        }
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Musica";
+        button.onclick = function(){
+          bgmusic.play();
+        }
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Pausa";
+        button.onclick = function(){
+          bgmusic.pause();
+        }
+        buttons.append(button);
+
+        root.append(buttons);
+
+        return root;
+      },
+      { renderOnChange: true }
+      );
+
+    VIEW_MANAGER.changeToView("Intro");
   }
 })();
 
