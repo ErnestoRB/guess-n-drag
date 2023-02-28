@@ -1,5 +1,6 @@
 const CANVAS_WIDTH = 3000;
 const CANVAS_HEIGHT = 2000;
+const jsConfetti = new JSConfetti();
 
 class Animal {
   constructor(nombre, img, audio) {
@@ -63,6 +64,18 @@ const DATA_CONTROLLER = (function () {
     saveToLocalStorage() {
       window.localStorage.setItem(LS_KEY, JSON.stringify(ls));
     },
+    /**
+     *
+     * @returns {User[]} Historial de los jugadores
+     */
+    getHistorial() {
+      return ls;
+    },
+    getHistorialOrdenado() {
+      return ls.forEach((user) => {
+        // user.mejorPuntuacion = user.puntuaciones
+      });
+    },
   };
 
   window.onbeforeunload = object.saveToLocalStorage;
@@ -120,6 +133,8 @@ const GAME_MANAGER = new (class GameManager {
     new Animal("Serpiente", "resources/images/snake.png"),
     new Animal("Tigre", "resources/images/tiger.png"),
   ];
+
+  intervalID;
   constructor() {
     VIEW_MANAGER.createView(
       "Juego",
@@ -227,7 +242,37 @@ const GAME_MANAGER = new (class GameManager {
       },
       { renderOnChange: true }
     );
-    VIEW_MANAGER.changeToView("Juego");
+
+    VIEW_MANAGER.createView("Felicidades", () => {
+      const element = document.createElement("div");
+      element.className = "felicitaciones w-full h-full";
+      element.innerHTML = `
+      <div class="pyro">
+          <div class="before"></div>
+          <div class="after"></div>
+        </div>
+        <div class="contenedor">
+          <h1 class="felicidades-etiqueta">Felicidades has ganado!</h1>
+        </div>
+      `;
+
+      const boton = document.createElement("button");
+      boton.innerHTML = "Regresar ";
+      boton.onclick = () => {
+        clearInterval(this.intervalID);
+        VIEW_MANAGER.changeToView("Juego");
+      };
+
+      element.appendChild(boton);
+      this.intervalID = setInterval(() => {
+        jsConfetti.addConfetti({
+          emojis: ["🌈", "⚡️", "💥", "✨", "💫", "🌸"],
+        });
+      }, 3000);
+
+      return element;
+    });
+    VIEW_MANAGER.changeToView("Felicidades");
   }
 })();
 
