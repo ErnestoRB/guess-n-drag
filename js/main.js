@@ -5,8 +5,12 @@ class Animal {
   constructor(nombre, img, audio) {
     this.nombre = nombre;
     this.img = img;
-    this.audio = audio;
+    this.audio = new Audio(audio);
     this.posicion = undefined;
+  }
+
+  reproducirSonido() {
+      this.audio.play();
   }
 
   /**
@@ -113,22 +117,36 @@ VIEW_MANAGER.createView("Index", () => {
 
 const GAME_MANAGER = new (class GameManager {
   animales = [
-    new Animal("Mono", "resources/images/ape.png"),
-    new Animal("Elefante", "resources/images/elephant.png"),
-    new Animal("León", "resources/images/lion.png"),
-    new Animal("Loro", "resources/images/parrot.png"),
-    new Animal("Serpiente", "resources/images/snake.png"),
-    new Animal("Tigre", "resources/images/tiger.png"),
+    new Animal("Mono", "resources/images/ape.png", "resources/music/monoOrig.mp3"),
+    new Animal("Elefante", "resources/images/elephant.png","resources/music/elefanteOrig.mp3"),
+    new Animal("León", "resources/images/lion.png","resources/music/leonOrig.mp3"),
+    new Animal("Loro", "resources/images/parrot.png","resources/music/loroOrig.mp3"),
+    new Animal("Serpiente", "resources/images/snake.png","resources/music/serpienteOrig.mp3"),
+    new Animal("Tigre", "resources/images/tiger.png","resources/music/tigreOrig.mp3"),
   ];
+
+ 
+
   constructor() {
     VIEW_MANAGER.createView(
       "Juego",
       () => {
+
+        //this.Audio[0].reproducirSonido();//AUDIO ANIMALES 
+
+
         const root = document.createElement("div");
+
+        const music= new Audio("resources/music/No More Glow - Gilttering.mp3");// MUSICA FONDO 
+        music.loop=true;//RPETIR 
+        music.play();//REPRODUCIR 
+
+        
         root.className = "flex relative";
         const canvas = document.createElement("canvas");
         const answerBox = document.createElement("div");
         answerBox.className = "answers";
+        
 
         function isOverlapping({ x: x1, y: y1 }, { x: x2, y: y2 }) {
           return (
