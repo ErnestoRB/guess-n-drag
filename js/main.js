@@ -331,17 +331,20 @@ const GAME_MANAGER = new (class GameManager {
       "Creditos",
       () => {
         const root = document.createElement("div");
-        root.className = "w-full h-full bg-gray text-white";
+        root.className = "w-full h-full multicolor-bg text-black";
         root.innerHTML = `
-        <div class="creditos-container">
-          <h1 class="text-center">Créditos</h1>
-          <ul class="creditos text-center">
-            <li>Iker Jiménez Tovar</li>
-            <li>Paulina Lizbeth Esparza Jiménez</li>
-            <li>Ernesto Rodrigo Ramírez Briano</li>
-            <li>Karen Itzel Vazquez Reyes</li>
-          </ul>
-          <button onclick="VIEW_MANAGER.changeToView('Intro')">Regresar</button>
+        <div class="creditos-container text-center">
+          <h1>Bash Crashers</h1>
+          <h4>Un equipo conformado por:</h4>
+          <h1 class="funny-text text-white">Paulina Lizbeth Esparza Jimenez</h1>
+          <h1 class="funny-text text-white">Ernesto Rodrigo Ramirez Briano</h1>
+          <h1 class="funny-text text-white">Karen Itzel Vazquez Reyes</h1>
+          <h1 class="funny-text text-white">Iker Jimenez Tovar</h1>
+          <h2>Universidad Autónoma de Aguascalientes</h2>
+          <h3>Ingeniería en Sistemas Computacionales 6°B</h3>
+          <h4>Un proyecto hecho para la materia de Tecnologías Web</h4>
+          <h5>Aguascalientes, Ags. A 4 de marzo de 2023</h5>
+          <button class="introButton" onclick="VIEW_MANAGER.changeToView('Intro')">Regresar</button>
         </div>
         `;
         return root;
@@ -363,7 +366,7 @@ const GAME_MANAGER = new (class GameManager {
           <div class="after"></div>
         </div>
         <div class="contenedor">
-          <h1 class="felicidades-etiqueta">Felicidades has ganado!</h1>
+          <h1 class="felicidades-etiqueta">¡Felicidades, has ganado!</h1>
         </div>
       `;
 
@@ -378,7 +381,7 @@ const GAME_MANAGER = new (class GameManager {
       element.appendChild(boton);
       this.intervalID = setInterval(() => {
         jsConfetti.addConfetti({
-          emojis: ["🌈", "⚡️", "💥", "✨", "💫", "🌸"],
+          emojis: ["🙉", "🐍", "🐯", "🦁", "🦜", "🐘"],
         });
       }, 3000);
 
@@ -388,9 +391,10 @@ const GAME_MANAGER = new (class GameManager {
       "Intro",
       () => {
         const root = document.createElement("div");
+        root.className = "w-full h-full multicolor-bg";
         const canvas = document.createElement("canvas");
-        canvas.setAttribute("width", 1000);
-        canvas.setAttribute("height", 400);
+        canvas.setAttribute("width", 2000);
+        canvas.setAttribute("height", 800);
 
         canvas.className = "intro";
         var ctx = canvas.getContext("2d");
@@ -398,19 +402,19 @@ const GAME_MANAGER = new (class GameManager {
         var lion = new Image();
         lion.src = "resources/images/lion.png";
         lion.onload = function () {
-          ctx.drawImage(lion, 200, 200, 200, 200);
+          ctx.drawImage(lion, 700, 500, 300, 300);
         };
 
         var tiger = new Image();
         tiger.src = "resources/images/tiger.png";
         tiger.onload = function () {
-          ctx.drawImage(tiger, 600, 200, 200, 200);
+          ctx.drawImage(tiger, 1000, 500, 300, 300);
         };
 
         var img = new Image();
         img.src = "resources/images/logo1.png";
         img.onload = function () {
-          ctx.drawImage(img, 100, 0, 800, 400);
+          ctx.drawImage(img, 250, 100, 1500, 426);
         };
 
         root.append(canvas);
