@@ -1,4 +1,4 @@
-:root{
+:root {
   --base-red: #f65247;
   --base-orange: #f0ad28;
   --base-yellow: #f4dd39;
@@ -20,19 +20,25 @@
   --dark-blue: #499ece;
   --dark-purple: #4d529e;
 
-  --font: 'GoodDog Plain';
+  --font: "GoodDog Plain";
 }
+body {
+  height: 100svh;
+}
+
 * {
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Urbanist', sans-serif;
+  font-family: "Urbanist", sans-serif;
 }
 
-.intro{
+.intro {
   border: none;
 }
 
-.score {
+.upper-right {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 0;
   right: 0;
@@ -41,6 +47,16 @@
   background-color: aliceblue;
   padding: 5px;
 }
+
+.answers > div {
+  background-color: var(--base-purple);
+  color: white;
+  padding: 5px 10px;
+}
+.answers > div:hover {
+  background-color: var(--dark-blue);
+}
+
 .answers {
   position: absolute;
   background-color: white;
@@ -108,14 +124,50 @@ canvas {
   backdrop-filter: blur(10px);
 }
 
-.buttons{
+.buttons {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   border-radius: 15px;
 }
 
-.introButton{
+.text-center {
+  text-align: center;
+}
+
+.text-white {
+  color: white;
+}
+
+.bg-gray {
+  background-color: rgb(56, 56, 56);
+}
+
+.creditos-container {
+  padding: 50px 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-direction: column;
+}
+
+ul.creditos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: max-content;
+}
+
+ul.creditos > li {
+  text-decoration: none;
+  list-style: none;
+  background-color: var(--dark-purple);
+  padding: 10px;
+  color: white;
+}
+
+.introButton {
   font-family: var(--font);
   padding: 10px;
   margin: 15px;
@@ -125,35 +177,35 @@ canvas {
   cursor: pointer;
 }
 
-.animated{
+.animated {
   animation-name: colors;
   animation-duration: 5s;
   animation-iteration-count: infinite;
 }
 
-@keyframes colors{
-  0%{
+@keyframes colors {
+  0% {
     background-color: var(--base-red);
   }
 
-  25%{
+  25% {
     background-color: var(--base-yellow);
   }
 
-  50%{
+  50% {
     background-color: var(--base-green);
   }
 
-  75%{
+  75% {
     background-color: var(--base-blue);
   }
 
-  100%{
+  100% {
     background-color: var(--base-red);
   }
 }
 
-.introButton:hover{
+.introButton:hover {
   background-color: var(--dark-blue);
 }
 
@@ -162,6 +214,6 @@ canvas {
 }
 
 @font-face {
-  font-family: 'GoodDog Plain';
-  src: url('../resources/fonts/GOODDP__.TTF');
+  font-family: "GoodDog Plain";
+  src: url("../resources/fonts/GOODDP__.TTF");
 }
