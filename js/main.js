@@ -5,6 +5,7 @@ class Animal {
   constructor(nombre, img, audio) {
     this.nombre = nombre;
     this.img = img;
+    this.solucionado = false;
     this.audio = new Audio(audio);
     this.posicion = undefined;
   }
@@ -14,16 +15,13 @@ class Animal {
   }
 
   /**
-   *
-   * @param {number} width Ancho del canvas
-   * @param {number} height Altura del canvas
    * @returns {{ x: number, y: number}} Posición en la que se puede dibujar el canvas. No garantiza que no se solape con otro objeto.
    */
-  calcularPosicion(width, height) {
+  calcularPosicion() {
     const posicion = {
-      x: Math.round(Math.min(width - 300, Math.max(Math.random() * width, 0))),
+      x: Math.round(Math.min(CANVAS_WIDTH - 300, Math.random() * CANVAS_WIDTH)),
       y: Math.round(
-        Math.min(height - 300, Math.max(0, Math.random() * height))
+        Math.min(CANVAS_HEIGHT - 300, Math.random() * CANVAS_HEIGHT)
       ),
     };
     this.posicion = posicion;
@@ -131,18 +129,29 @@ const GAME_MANAGER = new (class GameManager {
     VIEW_MANAGER.createView(
       "Juego",
       () => {
-
         //this.Audio[0].reproducirSonido();//AUDIO ANIMALES 
-
-
-        const root = document.createElement("div");
-
         const music= new Audio("resources/music/No More Glow - Gilttering.mp3");// MUSICA FONDO 
         music.loop=true;//RPETIR 
         music.play();//REPRODUCIR 
-
         
-        root.className = "flex relative";
+        let puntuacion = 0;
+        const root = document.createElement("div");
+        root.className = "fondo-juego";
+        const blur = document.createElement("div");
+        blur.className = "blurred";
+        const container = document.createElement("div");
+        root.append(blur);
+        blur.append(container);
+        container.className = "flex relative";
+        const scoreElement = document.createElement("span");
+        scoreElement.className = "score";
+        container.appendChild(scoreElement);
+
+        function renderPuntuacion() {
+          scoreElement.innerText = `Puntuación: ${puntuacion}`;
+        }
+
+        renderPuntuacion();
         const canvas = document.createElement("canvas");
         const answerBox = document.createElement("div");
         answerBox.className = "answers";
@@ -154,7 +163,7 @@ const GAME_MANAGER = new (class GameManager {
           );
         }
 
-        root.append(answerBox);
+        container.append(answerBox);
         // tamaño del lienzo (canvas). es distinto al tamaño real en el viewport
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -168,7 +177,6 @@ const GAME_MANAGER = new (class GameManager {
         // dibujar animales
         this.animales.forEach((animal) => {
           // que cada uno tenga una posición distinta
-
           while (
             !animal.posicion ||
             this.animales.some(
@@ -178,7 +186,7 @@ const GAME_MANAGER = new (class GameManager {
                 isOverlapping(animal.posicion, otroAnimal.posicion)
             )
           ) {
-            animal.calcularPosicion(canvas.width, canvas.height);
+            animal.calcularPosicion();
           }
 
           const draggable = document.createElement("div");
@@ -212,11 +220,16 @@ const GAME_MANAGER = new (class GameManager {
           if (!animal) {
             return;
           }
-          if (animal.nombre == data) {
-            console.log("Acertaste! :)");
-          } else {
-            console.log("Fallaste! :)");
+          if (animal.solucionado) {
+            return;
           }
+          if (animal.nombre == data) {
+            animal.solucionado = true;
+            puntuacion += 100;
+          } else {
+            puntuacion -= 50;
+          }
+          renderPuntuacion();
         };
         canvas.ondragenter = (event) => {
           event.preventDefault();
@@ -224,8 +237,7 @@ const GAME_MANAGER = new (class GameManager {
         canvas.ondragover = (event) => {
           event.preventDefault();
         };
-        root.append(canvas);
-
+        container.append(canvas);
         return root;
       },
       { renderOnChange: true }
