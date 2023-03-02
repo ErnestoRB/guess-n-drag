@@ -10,7 +10,7 @@ class Animal {
   }
 
   reproducirSonido() {
-      this.audio.play();
+      this.audio.play;
   }
 
   /**
@@ -132,14 +132,14 @@ const GAME_MANAGER = new (class GameManager {
       "Juego",
       () => {
 
-        //this.Audio[0].reproducirSonido();//AUDIO ANIMALES 
+        this.animales[0].reproducirSonido();//AUDIO ANIMALES 
 
 
         const root = document.createElement("div");
 
-        const music= new Audio("resources/music/No More Glow - Gilttering.mp3");// MUSICA FONDO 
-        music.loop=true;//RPETIR 
-        music.play();//REPRODUCIR 
+        //const music= new Audio("resources/music/No More Glow - Gilttering.mp3");// MUSICA FONDO 
+       // music.loop=true;//RPETIR 
+       // music.play;//REPRODUCIR 
 
         
         root.className = "flex relative";
