@@ -136,32 +136,32 @@ const GAME_MANAGER = new (class GameManager {
     new Animal(
       "Mono",
       "resources/images/ape.png",
-      "resources/music/monoOrig.mp3"
+      "resources/music/OrigMono.mp3"
     ),
     new Animal(
       "Elefante",
       "resources/images/elephant.png",
-      "resources/music/elefanteOrig.mp3"
+      "resources/music/OrigElefante.mp3"
     ),
     new Animal(
       "León",
       "resources/images/lion.png",
-      "resources/music/leonOrig.mp3"
+      "resources/music/OrigLeon.mp3"
     ),
     new Animal(
       "Loro",
       "resources/images/parrot.png",
-      "resources/music/loroOrig.mp3"
+      "resources/music/OrigLoro.mp3"
     ),
     new Animal(
       "Serpiente",
       "resources/images/snake.png",
-      "resources/music/serpienteOrig.mp3"
+      "resources/music/OrigSerpiente.mp3"
     ),
     new Animal(
       "Tigre",
       "resources/images/tiger.png",
-      "resources/music/tigreOrig.mp3"
+      "resources/music/OrigTigre.mp3"
     ),
   ];
   // user es el usuario que se debe cargar en la pantalla de captura de alias
