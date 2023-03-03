@@ -177,7 +177,7 @@ const GAME_MANAGER = new (class GameManager {
       "Juego",
       () => {
         //this.Audio[0].reproducirSonido();//AUDIO ANIMALES
-        bgmusic.play();
+       // bgmusic.play();
         let puntuacion = 0;
 
         const root = document.createElement("div");
@@ -194,16 +194,24 @@ const GAME_MANAGER = new (class GameManager {
         finishButton.innerHTML = "Terminar juego";
         const musicbutton = document.createElement("button");
         musicbutton.innerHTML = "Musica";
+        
+        var sound=false;
 
         function MusicControler(){//musica alterna
-         if(bgmusic.pause()==false){
+      
+          if(!sound){
             bgmusic.play();
-         }else if(bgmusic.pause()==true){
+            sound=true;
+            
+          }else{
             bgmusic.pause();
-         }
+            sound=false;
+          }
+      
           
           
         }
+        
       
 
         const onFinish = () => {
