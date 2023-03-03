@@ -352,10 +352,75 @@ const GAME_MANAGER = new (class GameManager {
       { renderOnChange: true }
     );
 
-    VIEW_MANAGER.createView("Historial", () => {
-      const root = document.createElement("div");
-      return root;
-    });
+    VIEW_MANAGER.createView(
+      "Historial",
+      () => {
+        const boton = document.createElement("button");
+        boton.className = "back-buttton";
+        boton.innerHTML = "Regresar";
+        boton.onclick = () => {
+          clearInterval(this.intervalID);
+          VIEW_MANAGER.changeToView("Intro");
+        };
+
+        const contenedorboton = document.createElement("div");
+        contenedorboton.className = "back-container";
+        contenedorboton.appendChild(boton);
+
+        const root = document.createElement("div");
+        root.className = "w-full h-full multicolor-bg text-black";
+        const historial = DATA_CONTROLLER.getHistorial();
+        let jugadores = '';
+        
+        if (historial) {
+          historial.forEach(item => {
+            jugadores += `
+            <div class="row">
+              <span>${'persona'}</span>
+              <span>${'2:33'}</span>
+            </div>`
+          })
+        } else {
+          //datos de ejemplo
+          jugadores = `
+            <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+            `
+        }
+        
+        root.innerHTML = `
+        <div class="container">
+          <img class="img" src="./resources/images/trophy.png" alt="">
+          <div class="card">
+            <div class="card-header">
+              <h2>Top Scores</h2>
+            </div>
+            <div class="card-body">
+              ${jugadores}
+            </div>
+          </div>
+        </div>
+        `;
+
+        root.appendChild(contenedorboton);
+        return root;
+      },
+      { renderOnChange: true }
+    );
 
     VIEW_MANAGER.createView("Felicidades", () => {
       const element = document.createElement("div");
