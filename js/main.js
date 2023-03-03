@@ -419,7 +419,7 @@ const GAME_MANAGER = new (class GameManager {
         `;
         const elemento = document.createElement("div");
         const atras = document.createElement("button");
-        
+        button.className ="introButton animated";
         const input = document.createElement("input")
         
         input.type = "text"
