@@ -10,6 +10,20 @@ bgmusic.loop = true;
 bgmusic.controls=true;
 document.body.append(bgmusic);
 
+class User {
+  constructor(nombre, puntuaciones = []) {
+    this.nombre = nombre;
+    this.puntuaciones = puntuaciones;
+  }
+
+  addPuntuacion(puntos, tiempo) {
+    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
+  }
+}
+
+
+
+
 class Animal {
   constructor(nombre, img, audio) {
     this.nombre = nombre;
@@ -51,7 +65,9 @@ const DATA_CONTROLLER = (function () {
       return [];
     }
   }
-  const ls = loadLocalStorage();
+  let ls = loadLocalStorage() || [];
+
+  ls = ls.map(item => new User(item.nombre, item.puntuaciones))
 
   const object = {
     /**
@@ -65,10 +81,13 @@ const DATA_CONTROLLER = (function () {
         (user) => user.nombre.toLowerCase() === name.toLowerCase()
       );
       if (!user) {
-        return new User(name);
+        const newUser = new User(name);
+        ls.push(newUser); 
+        return newUser;
       }
       return user;
     },
+    
     /**
      * Método que persiste la información de los usuarios en el LocalStorage. LLamado automáticamente antes de cerrar la ventana del navegador
      */
@@ -81,6 +100,9 @@ const DATA_CONTROLLER = (function () {
      */
     getHistorial() {
       return ls;
+    },
+    resetHistorial() {
+      ls = []
     },
     getHistorialOrdenado() {
       return ls.forEach((user) => {
@@ -190,12 +212,17 @@ const GAME_MANAGER = new (class GameManager {
         container.className = "flex relative";
 
         const upperRightElement = document.createElement("div");
+
+        const spanNombre = document.createElement("span")
+        spanNombre.innerText = this.user.nombre;
+        upperRightElement.appendChild(spanNombre)
         const finishButton = document.createElement("button");
         finishButton.innerHTML = "Terminar juego";
         const musicbutton = document.createElement("button");
         musicbutton.innerHTML = "Musica";
         
-        var sound=false;
+  
+        var sound=false;//bandera
 
         function MusicControler(){//musica alterna
       
@@ -207,8 +234,6 @@ const GAME_MANAGER = new (class GameManager {
             bgmusic.pause();
             sound=false;
           }
-      
-          
           
         }
         
@@ -337,8 +362,8 @@ const GAME_MANAGER = new (class GameManager {
             animal.solucionado = true;
             puntuacion += 100;
             if (this.animales.every((animal) => animal.solucionado)) {
+              this.user.addPuntuacion(puntuacion, this.tiempo)
               onFinish();
-              // user.addPunutacion(puntuacion, this.tiempo)
               VIEW_MANAGER.changeToView("Felicidades");
             }
           } else {
@@ -384,38 +409,39 @@ const GAME_MANAGER = new (class GameManager {
       const root = document.createElement("div");
       
       
-      root.className = "w-full h-full bg-white text-black";
+      root.className = "w-full h-full multicolor-bg text-black";
       root.innerHTML = `
-        <h3 style="text-align:center; font-size:60px; font-family:Kanit ;color:green;">CAPTURA DE ALIAS</h3>
+      <h3  class="funny-text text-white";>CAPTURA DE ALIAS</h3>
         <br>
-            <p style="font-size:45px; color:blue; text-align:center">!Bienvenido a guess-n-drag, porfavor elige tu Alias para reconocerte cada vez que juegues!
+        <p class="funny-text text-white">!Bienvenido a guess-n-drag, porfavor elige tu Alias para reconocerte cada vez que juegues!</p>
+        <br>        
+      
+        `;
+        const elemento = document.createElement("div");
+        const atras = document.createElement("button");
+        
+        const input = document.createElement("input")
+        
+        input.type = "text"
+        input.className = "form-control"
+        input.placeholder = "Alias"
+     atras.innerHTML = "REGRESAR";
 
-              <input style=" height:50px; width:300px ; size=50px align-content:center;" id="nombre"type="text" class="form-control" placeholder="Alias" aria-label="alias">
-           
-        <br>
-        <br>
-        <br>
-            <img style="align-content:right" src=resources/images/elephant.png>
-            <img src=resources/images/lion.png>
-            <img src=resources/images/snake.png>
-            <img src=resources/images/ape.png>
-            <img src=resources/images/tiger.png>
-            
-          
-           <br>
-       
-     `;
-     const elemento = document.createElement("div");
-     const save = document.createElement("button");
-     save.innerHTML = "GUARDAR";
      const play =document.createElement("button");
      play.innerHTML="JUGAR";
-     elemento.appendChild(save);
+     elemento.appendChild(input)
+     elemento.appendChild(atras);
      elemento.appendChild(play);
      root.appendChild(elemento);
      
-     play.onclick =() =>{
-      VIEW_MANAGER.changeToView("Juego");
+     play.onclick = (e) =>{
+      const usuario = input.value;
+      this.user = DATA_CONTROLLER.getUserData(usuario);
+       VIEW_MANAGER.changeToView("Juego");
+     }
+     atras.onclick =() =>{
+      VIEW_MANAGER.changeToView("Intro");
+
      }
 
      return root;
@@ -542,13 +568,3 @@ const GAME_MANAGER = new (class GameManager {
   }
 })();
 
-class User {
-  constructor(nombre, puntuaciones = []) {
-    this.nombre = nombre;
-    this.puntuaciones = puntuaciones;
-  }
-
-  addPuntuacion(puntos, tiempo) {
-    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
-  }
-}

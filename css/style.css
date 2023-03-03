@@ -217,3 +217,64 @@ ul.creditos > li {
   font-family: "GoodDog Plain";
   src: url("../resources/fonts/GOODDP__.TTF");
 }
+.funny-text{
+  font-family: var(--font);
+  font-size: 40px;
+  -webkit-text-stroke: 0.5px black;
+  transition: color 0.5s ease-out;
+}
+
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+
+
+.creditos-container {
+  padding: 50px 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+
+.text-black{
+  color: black;
+}
+
+body .multicolor-bg{
+  background: linear-gradient(90deg, var(--base-red) 25%, rgb(0, 0, 0, 0) 25%), linear-gradient(90deg, var(--base-yellow) 50%, rgb(0, 0, 0, 0) 50%), 
+    linear-gradient(90deg, var(--base-green) 75%, var(--base-blue) 75%);
+  
+}
+h3{
+  
+  text-align:center; 
+  font-size:80px; 
+  font-family:Kanit ;
+  color:white;
+
+}
+p{
+  font-size:55px ;
+   text-align:center;
+
+}
+input{
+  font-size:40px; 
+  display: block;
+  flex: auto;
+
+
+}
+.btnca{
+   background-color:#4d529e;
+   size: 15px;
+}
