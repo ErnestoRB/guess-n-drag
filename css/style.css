@@ -235,13 +235,6 @@ ul.creditos > li {
 
 
 
-.creditos-container {
-  padding: 50px 0;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-direction: column;
-}
 
 
 
@@ -258,7 +251,7 @@ h3{
   
   text-align:center; 
   font-size:80px; 
-  font-family:Kanit ;
+  
   color:white;
 
 }
@@ -274,7 +267,20 @@ input{
 
 
 }
-.btnca{
-   background-color:#4d529e;
-   size: 15px;
+
+
+
+
+.alias-container {
+  padding: 50px 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-direction: column;
 }
+
+
+
+
+
+

@@ -418,16 +418,20 @@ const GAME_MANAGER = new (class GameManager {
       
         `;
         const elemento = document.createElement("div");
+        elemento.className= "alias-container";
         const atras = document.createElement("button");
-        button.className ="introButton animated";
+        
         const input = document.createElement("input")
         
         input.type = "text"
         input.className = "form-control"
         input.placeholder = "Alias"
+        atras.className =" buttons introButton animated";
+       
      atras.innerHTML = "REGRESAR";
 
      const play =document.createElement("button");
+     play.className =" buttons introButton animated";
      play.innerHTML="JUGAR";
      elemento.appendChild(input)
      elemento.appendChild(atras);
