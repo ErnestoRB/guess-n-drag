@@ -1,25 +1,35 @@
 const CANVAS_WIDTH = 3000;
 const CANVAS_HEIGHT = 2000;
+const jsConfetti = new JSConfetti();
+
+const bgmusic = document.createElement("audio");
+bgmusic.src =
+  "resources/music/No More Glow - Gilttering (Shortened Version).mp3";
+bgmusic.volume = 0.5;
+bgmusic.loop = true;
+document.body.append(bgmusic);
 
 class Animal {
   constructor(nombre, img, audio) {
     this.nombre = nombre;
     this.img = img;
-    this.audio = audio;
+    this.solucionado = false;
+    this.audio = new Audio(audio);
     this.posicion = undefined;
   }
 
+  reproducirSonido() {
+    this.audio.play();
+  }
+
   /**
-   *
-   * @param {number} width Ancho del canvas
-   * @param {number} height Altura del canvas
    * @returns {{ x: number, y: number}} Posición en la que se puede dibujar el canvas. No garantiza que no se solape con otro objeto.
    */
-  calcularPosicion(width, height) {
+  calcularPosicion() {
     const posicion = {
-      x: Math.round(Math.min(width - 300, Math.max(Math.random() * width, 0))),
+      x: Math.round(Math.min(CANVAS_WIDTH - 300, Math.random() * CANVAS_WIDTH)),
       y: Math.round(
-        Math.min(height - 300, Math.max(0, Math.random() * height))
+        Math.min(CANVAS_HEIGHT - 300, Math.random() * CANVAS_HEIGHT)
       ),
     };
     this.posicion = posicion;
@@ -44,7 +54,8 @@ const DATA_CONTROLLER = (function () {
 
   const object = {
     /**
-     * Función que carga la información de un usuario de LocalStorage dado su nombre
+     * Función que carga la información de un usuario de LocalStorage dado su nombre.
+     * En caso de no encontrar en LS, crea un usuario con el nombre dado
      * @param {string} name Nombre del usuario a recuperar
      * @returns {User} Una instancia de la clase User
      */
@@ -62,6 +73,18 @@ const DATA_CONTROLLER = (function () {
      */
     saveToLocalStorage() {
       window.localStorage.setItem(LS_KEY, JSON.stringify(ls));
+    },
+    /**
+     *
+     * @returns {User[]} Historial de los jugadores
+     */
+    getHistorial() {
+      return ls;
+    },
+    getHistorialOrdenado() {
+      return ls.forEach((user) => {
+        // user.mejorPuntuacion = user.puntuaciones
+      });
     },
   };
 
@@ -85,19 +108,22 @@ const VIEW_MANAGER = (function () {
       if (exists) {
         throw new Error(`La vista ${nombre} ya existe!`);
       }
-      const node = renderCallback();
-      if (!node) {
-        throw new Error(`La vista ${nombre} no está regresando ningun nodo!`);
-      }
-      views.push({ nombre, node, renderCallback, options });
+      views.push({ nombre, renderCallback, options });
     },
     changeToView(nombre) {
       const view = views.find((view) => view.nombre === nombre);
       if (!view) {
         throw new Error(`La vista ${nombre} no existe!`);
       }
+
       if (view.options?.renderOnChange) {
         view.node = view.renderCallback();
+      }
+      if (!view.node) {
+        view.node = view.renderCallback();
+      }
+      if (!view.node) {
+        throw new Error(`La vista ${nombre} no está regresando ningun nodo!`);
       }
       root.replaceChildren(view.node);
     },
@@ -105,27 +131,95 @@ const VIEW_MANAGER = (function () {
   return object;
 })();
 
-VIEW_MANAGER.createView("Index", () => {
-  const fragment = document.createDocumentFragment();
-  fragment.append("Hola");
-  return fragment;
-});
-
 const GAME_MANAGER = new (class GameManager {
   animales = [
-    new Animal("Mono", "resources/images/ape.png"),
-    new Animal("Elefante", "resources/images/elephant.png"),
-    new Animal("León", "resources/images/lion.png"),
-    new Animal("Loro", "resources/images/parrot.png"),
-    new Animal("Serpiente", "resources/images/snake.png"),
-    new Animal("Tigre", "resources/images/tiger.png"),
+    new Animal(
+      "Mono",
+      "resources/images/ape.png",
+      "resources/music/monoOrig.mp3"
+    ),
+    new Animal(
+      "Elefante",
+      "resources/images/elephant.png",
+      "resources/music/elefanteOrig.mp3"
+    ),
+    new Animal(
+      "León",
+      "resources/images/lion.png",
+      "resources/music/leonOrig.mp3"
+    ),
+    new Animal(
+      "Loro",
+      "resources/images/parrot.png",
+      "resources/music/loroOrig.mp3"
+    ),
+    new Animal(
+      "Serpiente",
+      "resources/images/snake.png",
+      "resources/music/serpienteOrig.mp3"
+    ),
+    new Animal(
+      "Tigre",
+      "resources/images/tiger.png",
+      "resources/music/tigreOrig.mp3"
+    ),
   ];
+  // user es el usuario que se debe cargar en la pantalla de captura de alias
+  user;
+  tiempo = 0;
+
+  timerIntervalID;
+  intervalID;
+
   constructor() {
     VIEW_MANAGER.createView(
       "Juego",
       () => {
+        //this.Audio[0].reproducirSonido();//AUDIO ANIMALES
+        bgmusic.play();
+        let puntuacion = 0;
         const root = document.createElement("div");
-        root.className = "flex relative";
+        root.className = "fondo-juego";
+        const blur = document.createElement("div");
+        blur.className = "blurred";
+        const container = document.createElement("div");
+        root.append(blur);
+        blur.append(container);
+        container.className = "flex relative";
+        const upperRightElement = document.createElement("div");
+        const finishButton = document.createElement("button");
+        finishButton.innerHTML = "Terminar juego";
+        const onFinish = () => {
+          clearInterval(this.intervalID);
+          clearInterval(this.timerIntervalID);
+          this.intervalID = this.timerIntervalID = undefined;
+          this.tiempo = 0;
+          bgmusic.pause();
+        };
+        finishButton.onclick = () => {
+          onFinish();
+          VIEW_MANAGER.changeToView("Intro");
+        };
+        const scoreElement = document.createElement("span");
+        upperRightElement.className = "upper-right";
+        const timerElement = document.createElement("span");
+        timerElement.innerHTML = `Tiempo: ${this.tiempo}`;
+        if (!this.timerIntervalID) {
+          this.timerIntervalID = setInterval(() => {
+            this.tiempo++;
+            timerElement.innerHTML = `Tiempo: ${this.tiempo}`;
+          }, 1000);
+        }
+        upperRightElement.append(finishButton);
+        upperRightElement.append(scoreElement);
+        upperRightElement.append(timerElement);
+        container.appendChild(upperRightElement);
+
+        function renderPuntuacion() {
+          scoreElement.innerText = `Puntuación: ${puntuacion}`;
+        }
+
+        renderPuntuacion();
         const canvas = document.createElement("canvas");
         const answerBox = document.createElement("div");
         answerBox.className = "answers";
@@ -136,7 +230,7 @@ const GAME_MANAGER = new (class GameManager {
           );
         }
 
-        root.append(answerBox);
+        container.append(answerBox);
         // tamaño del lienzo (canvas). es distinto al tamaño real en el viewport
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -146,36 +240,42 @@ const GAME_MANAGER = new (class GameManager {
         background.src = "resources/images/background.jpg";
         background.onload = () => {
           ctx.drawImage(background, 0, 0);
+          // dibujar animales
+          this.animales
+            .sort(() => Math.random() - 0.5)
+            .forEach((animal) => {
+              // que cada uno tenga una posición distinta
+              while (
+                !animal.posicion ||
+                this.animales.some(
+                  (otroAnimal) =>
+                    animal !== otroAnimal &&
+                    otroAnimal.posicion &&
+                    isOverlapping(animal.posicion, otroAnimal.posicion)
+                )
+              ) {
+                animal.calcularPosicion();
+              }
+
+              const draggable = document.createElement("div");
+              draggable.draggable = true;
+              draggable.id = animal.nombre;
+              draggable.addEventListener("dragstart", (e) => {
+                e.dataTransfer.setData("data", animal.nombre);
+              });
+              draggable.innerText = animal.nombre;
+              answerBox.append(draggable);
+              const animalImage = new Image();
+              animalImage.src = animal.img;
+              animalImage.onload = () => {
+                ctx.drawImage(
+                  animalImage,
+                  animal.posicion.x,
+                  animal.posicion.y
+                );
+              };
+            });
         };
-        // dibujar animales
-        this.animales.forEach((animal) => {
-          // que cada uno tenga una posición distinta
-
-          while (
-            !animal.posicion ||
-            this.animales.some(
-              (otroAnimal) =>
-                animal !== otroAnimal &&
-                otroAnimal.posicion &&
-                isOverlapping(animal.posicion, otroAnimal.posicion)
-            )
-          ) {
-            animal.calcularPosicion(canvas.width, canvas.height);
-          }
-
-          const draggable = document.createElement("div");
-          draggable.draggable = true;
-          draggable.addEventListener("dragstart", (e) => {
-            e.dataTransfer.setData("data", animal.nombre);
-          });
-          draggable.innerText = animal.nombre;
-          answerBox.append(draggable);
-          const animalImage = new Image();
-          animalImage.src = animal.img;
-          animalImage.onload = () => {
-            ctx.drawImage(animalImage, animal.posicion.x, animal.posicion.y);
-          };
-        });
 
         canvas.ondrop = (event) => {
           event.preventDefault();
@@ -194,11 +294,26 @@ const GAME_MANAGER = new (class GameManager {
           if (!animal) {
             return;
           }
-          if (animal.nombre == data) {
-            console.log("Acertaste! :)");
-          } else {
-            console.log("Fallaste! :)");
+          // si se dejó caer en un animal que ya estaba solucionado no hacer nada
+          if (animal.solucionado) {
+            return;
           }
+          // si se dejó caer en el animal correcto
+          if (animal.nombre == data) {
+            const answerElement = document.getElementById(data);
+            answerElement.remove();
+            animal.reproducirSonido();
+            animal.solucionado = true;
+            puntuacion += 100;
+            if (this.animales.every((animal) => animal.solucionado)) {
+              onFinish();
+              // user.addPunutacion(puntuacion, this.tiempo)
+              VIEW_MANAGER.changeToView("Felicidades");
+            }
+          } else {
+            puntuacion -= 50;
+          }
+          renderPuntuacion();
         };
         canvas.ondragenter = (event) => {
           event.preventDefault();
@@ -206,8 +321,7 @@ const GAME_MANAGER = new (class GameManager {
         canvas.ondragover = (event) => {
           event.preventDefault();
         };
-        root.append(canvas);
-
+        container.append(canvas);
         return root;
       },
       { renderOnChange: true }
@@ -217,17 +331,141 @@ const GAME_MANAGER = new (class GameManager {
       "Creditos",
       () => {
         const root = document.createElement("div");
+        root.className = "w-full h-full bg-gray text-white";
         root.innerHTML = `
-        <div>
-          <h1>Hola 123</h1>
-          <button class="red" onclick="VIEW_MANAGER.changeToView('Juego')">cambiar</button>
+        <div class="creditos-container">
+          <h1 class="text-center">Créditos</h1>
+          <ul class="creditos text-center">
+            <li>Iker Jiménez Tovar</li>
+            <li>Paulina Lizbeth Esparza Jiménez</li>
+            <li>Ernesto Rodrigo Ramírez Briano</li>
+            <li>Karen Itzel Vazquez Reyes</li>
+          </ul>
+          <button onclick="VIEW_MANAGER.changeToView('Intro')">Regresar</button>
         </div>
         `;
         return root;
       },
       { renderOnChange: true }
     );
-    VIEW_MANAGER.changeToView("Juego");
+
+    VIEW_MANAGER.createView("Historial", () => {
+      const root = document.createElement("div");
+      return root;
+    });
+
+    VIEW_MANAGER.createView("Felicidades", () => {
+      const element = document.createElement("div");
+      element.className = "felicitaciones w-full h-full";
+      element.innerHTML = `
+      <div class="pyro">
+          <div class="before"></div>
+          <div class="after"></div>
+        </div>
+        <div class="contenedor">
+          <h1 class="felicidades-etiqueta">Felicidades has ganado!</h1>
+        </div>
+      `;
+
+      const boton = document.createElement("button");
+      boton.className = "link-regresar";
+      boton.innerHTML = "Regresar";
+      boton.onclick = () => {
+        clearInterval(this.intervalID);
+        VIEW_MANAGER.changeToView("Intro");
+      };
+
+      element.appendChild(boton);
+      this.intervalID = setInterval(() => {
+        jsConfetti.addConfetti({
+          emojis: ["🌈", "⚡️", "💥", "✨", "💫", "🌸"],
+        });
+      }, 3000);
+
+      return element;
+    });
+    VIEW_MANAGER.createView(
+      "Intro",
+      () => {
+        const root = document.createElement("div");
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("width", 1000);
+        canvas.setAttribute("height", 400);
+
+        canvas.className = "intro";
+        var ctx = canvas.getContext("2d");
+
+        var lion = new Image();
+        lion.src = "resources/images/lion.png";
+        lion.onload = function () {
+          ctx.drawImage(lion, 200, 200, 200, 200);
+        };
+
+        var tiger = new Image();
+        tiger.src = "resources/images/tiger.png";
+        tiger.onload = function () {
+          ctx.drawImage(tiger, 600, 200, 200, 200);
+        };
+
+        var img = new Image();
+        img.src = "resources/images/logo1.png";
+        img.onload = function () {
+          ctx.drawImage(img, 100, 0, 800, 400);
+        };
+
+        root.append(canvas);
+
+        const buttons = document.createElement("div");
+        buttons.className = "buttons";
+
+        var button = document.createElement("button");
+        button.className = "introButton animated";
+        button.innerHTML = "Jugar"; //cambiar a captura de alias
+        button.onclick = function () {
+          VIEW_MANAGER.changeToView("Juego");
+        };
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Creditos";
+        button.onclick = function () {
+          VIEW_MANAGER.changeToView("Creditos");
+        };
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Jugadores";
+        button.onclick = function () {
+          VIEW_MANAGER.changeToView("Historial");
+        };
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Musica";
+        button.onclick = function () {
+          bgmusic.play();
+        };
+        buttons.append(button);
+
+        button = document.createElement("button");
+        button.className = "introButton";
+        button.innerHTML = "Pausa";
+        button.onclick = function () {
+          bgmusic.pause();
+        };
+        buttons.append(button);
+
+        root.append(buttons);
+
+        return root;
+      },
+      { renderOnChange: true }
+    );
+
+    VIEW_MANAGER.changeToView("Intro");
   }
 })();
 
@@ -237,7 +475,7 @@ class User {
     this.puntuaciones = puntuaciones;
   }
 
-  addPuntuacion(puntos) {
-    this.puntuaciones.push({ puntos, fecha: Date.now() });
+  addPuntuacion(puntos, tiempo) {
+    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
   }
 }
