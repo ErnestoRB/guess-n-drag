@@ -5,8 +5,9 @@ const jsConfetti = new JSConfetti();
 const bgmusic = document.createElement("audio");
 bgmusic.src =
   "resources/music/No More Glow - Gilttering (Shortened Version).mp3";
-bgmusic.volume = 0.5;
+bgmusic.volume = 0.2;
 bgmusic.loop = true;
+bgmusic.controls=true;
 document.body.append(bgmusic);
 
 class Animal {
@@ -178,6 +179,7 @@ const GAME_MANAGER = new (class GameManager {
         //this.Audio[0].reproducirSonido();//AUDIO ANIMALES
         bgmusic.play();
         let puntuacion = 0;
+
         const root = document.createElement("div");
         root.className = "fondo-juego";
         const blur = document.createElement("div");
@@ -186,9 +188,24 @@ const GAME_MANAGER = new (class GameManager {
         root.append(blur);
         blur.append(container);
         container.className = "flex relative";
+
         const upperRightElement = document.createElement("div");
         const finishButton = document.createElement("button");
         finishButton.innerHTML = "Terminar juego";
+        const musicbutton = document.createElement("button");
+        musicbutton.innerHTML = "Musica";
+
+        function MusicControler(){//musica alterna
+         if(bgmusic.pause()==false){
+            bgmusic.play();
+         }else if(bgmusic.pause()==true){
+            bgmusic.pause();
+         }
+          
+          
+        }
+      
+
         const onFinish = () => {
           clearInterval(this.intervalID);
           clearInterval(this.timerIntervalID);
@@ -200,6 +217,10 @@ const GAME_MANAGER = new (class GameManager {
           onFinish();
           VIEW_MANAGER.changeToView("Intro");
         };
+        musicbutton.onclick =()=>{
+          MusicControler();
+        };
+
         const scoreElement = document.createElement("span");
         upperRightElement.className = "upper-right";
         const timerElement = document.createElement("span");
@@ -211,8 +232,10 @@ const GAME_MANAGER = new (class GameManager {
           }, 1000);
         }
         upperRightElement.append(finishButton);
+        upperRightElement.append(musicbutton);
         upperRightElement.append(scoreElement);
         upperRightElement.append(timerElement);
+
         container.appendChild(upperRightElement);
 
         function renderPuntuacion() {
@@ -349,6 +372,47 @@ const GAME_MANAGER = new (class GameManager {
       { renderOnChange: true }
     );
 
+    VIEW_MANAGER.createView("CapturaAlias", () => {
+      const root = document.createElement("div");
+      
+      
+      root.className = "w-full h-full bg-white text-black";
+      root.innerHTML = `
+        <h3 style="text-align:center; font-size:60px; font-family:Kanit ;color:green;">CAPTURA DE ALIAS</h3>
+        <br>
+            <p style="font-size:45px; color:blue; text-align:center">!Bienvenido a guess-n-drag, porfavor elige tu Alias para reconocerte cada vez que juegues!
+
+              <input style=" height:50px; width:300px ; size=50px align-content:center;" id="nombre"type="text" class="form-control" placeholder="Alias" aria-label="alias">
+           
+        <br>
+        <br>
+        <br>
+            <img style="align-content:right" src=resources/images/elephant.png>
+            <img src=resources/images/lion.png>
+            <img src=resources/images/snake.png>
+            <img src=resources/images/ape.png>
+            <img src=resources/images/tiger.png>
+            
+          
+           <br>
+       
+     `;
+     const elemento = document.createElement("div");
+     const save = document.createElement("button");
+     save.innerHTML = "GUARDAR";
+     const play =document.createElement("button");
+     play.innerHTML="JUGAR";
+     elemento.appendChild(save);
+     elemento.appendChild(play);
+     root.appendChild(elemento);
+     
+     play.onclick =() =>{
+      VIEW_MANAGER.changeToView("Juego");
+     }
+
+     return root;
+  });
+
     VIEW_MANAGER.createView("Historial", () => {
       const root = document.createElement("div");
       return root;
@@ -384,6 +448,7 @@ const GAME_MANAGER = new (class GameManager {
 
       return element;
     });
+
     VIEW_MANAGER.createView(
       "Intro",
       () => {
@@ -422,7 +487,7 @@ const GAME_MANAGER = new (class GameManager {
         button.className = "introButton animated";
         button.innerHTML = "Jugar"; //cambiar a captura de alias
         button.onclick = function () {
-          VIEW_MANAGER.changeToView("Juego");
+          VIEW_MANAGER.changeToView("CapturaAlias");
         };
         buttons.append(button);
 
