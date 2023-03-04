@@ -12,11 +12,11 @@ permissions:
   id-token: write
 
 jobs:
-  environment:
-    name: github-pages
-    url: ${{ steps.deployment.outputs.page_url }}
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout project
         uses: actions/checkout@v3
