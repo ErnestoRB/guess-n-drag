@@ -558,10 +558,12 @@ const GAME_MANAGER = new (class GameManager {
       return root;
     });
 
-    VIEW_MANAGER.createView("Felicidades", () => {
-      const element = document.createElement("div");
-      element.className = "felicitaciones w-full h-full";
-      element.innerHTML = `
+    VIEW_MANAGER.createView(
+      "Felicidades",
+      () => {
+        const element = document.createElement("div");
+        element.className = "felicitaciones w-full h-full";
+        element.innerHTML = `
       <div class="pyro">
           <div class="before"></div>
           <div class="after"></div>
@@ -571,23 +573,25 @@ const GAME_MANAGER = new (class GameManager {
         </div>
       `;
 
-      const boton = document.createElement("button");
-      boton.className = "link-regresar";
-      boton.innerHTML = "Regresar";
-      boton.onclick = () => {
-        clearInterval(this.intervalID);
-        VIEW_MANAGER.changeToView("Intro");
-      };
+        const boton = document.createElement("button");
+        boton.className = "link-regresar";
+        boton.innerHTML = "Regresar";
+        boton.onclick = () => {
+          clearInterval(this.intervalID);
+          VIEW_MANAGER.changeToView("Intro");
+        };
 
-      element.appendChild(boton);
-      this.intervalID = setInterval(() => {
-        jsConfetti.addConfetti({
-          emojis: ["🙉", "🐍", "🐯", "🦁", "🦜", "🐘"],
-        });
-      }, 3000);
+        element.appendChild(boton);
+        this.intervalID = setInterval(() => {
+          jsConfetti.addConfetti({
+            emojis: ["🙉", "🐍", "🐯", "🦁", "🦜", "🐘"],
+          });
+        }, 3000);
 
-      return element;
-    });
+        return element;
+      },
+      { renderOnChange: true }
+    );
 
     VIEW_MANAGER.createView(
       "Intro",
