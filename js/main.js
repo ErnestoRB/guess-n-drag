@@ -442,17 +442,32 @@ const GAME_MANAGER = new (class GameManager {
         let jugadores = '';
         
         if (historial) {
-          historial.forEach(item => {
+          for(let i=0; i<historial.length; i++){
             jugadores += `
             <div class="row">
-              <span>${'persona'}</span>
-              <span>${'2:33'}</span>
+              <span>${i+1 + '.- ' + historial[i]?.nombre}</span>
+              <span>${historial[i]?.puntuaciones[0]}</span>
             </div>`
-          })
+          }
+
         } else {
           //datos de ejemplo
           jugadores = `
             <div class="row">
+                <span>1.- Juan</span>
+                <span>333</span>
+              </div>
+              <div class="row">
+                <span>2.- Juan</span>
+                <span>300</span>
+              </div>
+              <div class="row">
+                <span>3.- Juan</span>
+                <span>290</span>
+              </div>
+              <div class="row">
+                <span>4.- Juan</span>
+                <span>250</span>
                 <span>1. Juan</span>
                 <span>34:12</span>
               </div>
@@ -482,6 +497,7 @@ const GAME_MANAGER = new (class GameManager {
               ${jugadores}
             </div>
           </div>
+          <img class="img2" src="./resources/images/medal.png" alt="">
         </div>
         `;
 
