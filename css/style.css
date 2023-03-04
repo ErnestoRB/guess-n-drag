@@ -240,6 +240,7 @@ audio {
 .funny-text:hover{
   color: var(--light-purple);
   cursor: pointer;
+
 }
 
 .flex-col {
@@ -303,6 +304,82 @@ audio {
 @font-face {
   font-family: "GoodDog Plain";
   src: url("../resources/fonts/GOODDP__.TTF");
+}
+
+/*-------------------------*/
+
+.container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(219, 219, 219);
+}
+
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 300px;
+  box-shadow: 0px 0px 12px 1px #9d9ea5;
+  height: fit-content;
+  z-index: 1;
+}
+
+.card-header {
+  height: 70px;
+  padding: 20px;
+  color: white;
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, #565baf 35%, rgba(0,212,255,1) 100%);
+}
+
+.card-body {
+  padding: 20px;
+  background-color: white;
+}
+
+.row {
+  box-shadow: 0px 0px 8px 0px #8a8a96;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  transition: transform .2s;
+  padding: 5px;
+  font-weight: 600;
+  justify-content: space-between;
+  display: flex;
+}
+
+.row:hover {
+  transform: scale(1.1);
+}
+
+.img {
+  position: absolute;
+  z-index: 0;
+  width: 400px;
+  left: 10px;
+}
+
+.back-container {
+  position: absolute;
+  right: 100px;
+  top: 70px;
+}
+
+.back-buttton {
+  background-color: #51afe5;
+  padding: 10px 25px;
+  border: 0;
+  border-radius: 10px 5px;
+  color: white;
+  font-size: 16px;
+  box-shadow: 0px 0px 8px 0px #8a8a96;
+  cursor: pointer;
+}
+
+.back-buttton:hover {
+  background-color: #3a9bd3;
+  transform: scale(1.1);
 }
 .funny-text {
   font-family: var(--font);
