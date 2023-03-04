@@ -376,8 +376,8 @@ const GAME_MANAGER = new (class GameManager {
           historial.forEach(item => {
             jugadores += `
             <div class="row">
-              <span>${'persona'}</span>
-              <span>${'2:33'}</span>
+              <span>${item?.jugador}</span>
+              <span>${item?.tiempo}</span>
             </div>`
           })
         } else {
@@ -413,6 +413,7 @@ const GAME_MANAGER = new (class GameManager {
               ${jugadores}
             </div>
           </div>
+          <img class="img2" src="./resources/images/medal.png" alt="">
         </div>
         `;
 
