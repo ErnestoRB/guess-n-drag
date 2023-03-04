@@ -279,7 +279,17 @@ input{
   flex-direction: column;
 }
 
-
+.capturaButton {
+  font-family: var(--font);
+  padding: 10px;
+  margin: 15px;
+  font-size: 40px;
+  border: 2px solid black;
+  background-color:#676bb7;
+  
+  cursor: pointer;
+  color: white;
+}
 
 
 

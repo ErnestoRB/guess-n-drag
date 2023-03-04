@@ -426,13 +426,12 @@ const GAME_MANAGER = new (class GameManager {
         input.type = "text"
         input.className = "form-control"
         input.placeholder = "Alias"
-        atras.className =" buttons introButton animated";
-       
-     atras.innerHTML = "REGRESAR";
+        atras.className ="capturaButton ";
+        atras.innerHTML = "Regresar";
 
      const play =document.createElement("button");
-     play.className =" buttons introButton animated";
-     play.innerHTML="JUGAR";
+     play.className =" capturaButton ";
+     play.innerHTML="Jugar";
      elemento.appendChild(input)
      elemento.appendChild(atras);
      elemento.appendChild(play);
