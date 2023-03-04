@@ -483,7 +483,7 @@ const GAME_MANAGER = new (class GameManager {
           <img class="img" src="./resources/images/trophy.png" alt="">
           <div class="card">
             <div class="card-header">
-              <h2>Top Scores</h2>
+              <h2>Mejores puntuaciones</h2>
             </div>
             <div class="card-body">
               ${jugadores}
