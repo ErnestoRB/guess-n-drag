@@ -32,6 +32,12 @@ body {
   font-family: "Urbanist", sans-serif;
 }
 
+body .multicolor-bg{
+  background: linear-gradient(90deg, var(--base-red) 25%, rgb(0, 0, 0, 0) 25%), linear-gradient(90deg, var(--base-yellow) 50%, rgb(0, 0, 0, 0) 50%), 
+    linear-gradient(90deg, var(--base-green) 75%, var(--base-blue) 75%);
+  
+}
+
 .intro {
   border: none;
 }
@@ -220,8 +226,20 @@ audio {
   color: white;
 }
 
-.bg-gray {
-  background-color: rgb(56, 56, 56);
+.text-black{
+  color: black;
+}
+
+.funny-text{
+  font-family: var(--font);
+  font-size: 40px;
+  -webkit-text-stroke: 0.5px black;
+  transition: color 0.5s ease-out;
+}
+
+.funny-text:hover{
+  color: var(--light-purple);
+  cursor: pointer;
 }
 
 .flex-col {
@@ -234,21 +252,6 @@ audio {
   gap: 20px;
   align-items: center;
   flex-direction: column;
-}
-
-ul.creditos {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: max-content;
-}
-
-ul.creditos > li {
-  text-decoration: none;
-  list-style: none;
-  background-color: var(--dark-purple);
-  padding: 10px;
-  color: white;
 }
 
 .introButton {
