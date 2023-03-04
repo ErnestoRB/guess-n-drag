@@ -5,17 +5,33 @@ const jsConfetti = new JSConfetti();
 const bgmusic = document.createElement("audio");
 bgmusic.src =
   "resources/music/No More Glow - Gilttering (Shortened Version).mp3";
-bgmusic.volume = 0.5;
+bgmusic.volume = 0.2;
 bgmusic.loop = true;
+bgmusic.controls = true;
+const errorSound = document.createElement("audio");
+errorSound.src = "resources/music/error.mp3";
 document.body.append(bgmusic);
+document.body.append(errorSound);
+
+class User {
+  constructor(nombre, puntuaciones = []) {
+    this.nombre = nombre;
+    this.puntuaciones = puntuaciones;
+  }
+
+  addPuntuacion(puntos, tiempo) {
+    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
+  }
+}
 
 class Animal {
-  constructor(nombre, img, audio) {
+  constructor(nombre, img, audio, emoji = "🌟") {
     this.nombre = nombre;
     this.img = img;
     this.solucionado = false;
     this.audio = new Audio(audio);
     this.posicion = undefined;
+    this.emoji = emoji;
   }
 
   reproducirSonido() {
@@ -50,7 +66,9 @@ const DATA_CONTROLLER = (function () {
       return [];
     }
   }
-  const ls = loadLocalStorage();
+  let ls = loadLocalStorage() || [];
+
+  ls = ls.map((item) => new User(item.nombre, item.puntuaciones));
 
   const object = {
     /**
@@ -64,10 +82,13 @@ const DATA_CONTROLLER = (function () {
         (user) => user.nombre.toLowerCase() === name.toLowerCase()
       );
       if (!user) {
-        return new User(name);
+        const newUser = new User(name);
+        ls.push(newUser);
+        return newUser;
       }
       return user;
     },
+
     /**
      * Método que persiste la información de los usuarios en el LocalStorage. LLamado automáticamente antes de cerrar la ventana del navegador
      */
@@ -80,6 +101,9 @@ const DATA_CONTROLLER = (function () {
      */
     getHistorial() {
       return ls;
+    },
+    resetHistorial() {
+      ls = [];
     },
     getHistorialOrdenado() {
       return ls.forEach((user) => {
@@ -136,32 +160,38 @@ const GAME_MANAGER = new (class GameManager {
     new Animal(
       "Mono",
       "resources/images/ape.png",
-      "resources/music/monoOrig.mp3"
+      "resources/music/OrigMono.mp3",
+      "🙉"
     ),
     new Animal(
       "Elefante",
       "resources/images/elephant.png",
-      "resources/music/elefanteOrig.mp3"
+      "resources/music/OrigElefante.mp3",
+      "🐘"
     ),
     new Animal(
       "León",
       "resources/images/lion.png",
-      "resources/music/leonOrig.mp3"
+      "resources/music/OrigLeon.mp3",
+      "🦁"
     ),
     new Animal(
       "Loro",
       "resources/images/parrot.png",
-      "resources/music/loroOrig.mp3"
+      "resources/music/OrigLoro.mp3",
+      "🦜"
     ),
     new Animal(
       "Serpiente",
       "resources/images/snake.png",
-      "resources/music/serpienteOrig.mp3"
+      "resources/music/OrigSerpiente.mp3",
+      "🐍"
     ),
     new Animal(
       "Tigre",
       "resources/images/tiger.png",
-      "resources/music/tigreOrig.mp3"
+      "resources/music/OrigTigre.mp3",
+      "🐯"
     ),
   ];
   // user es el usuario que se debe cargar en la pantalla de captura de alias
@@ -175,9 +205,9 @@ const GAME_MANAGER = new (class GameManager {
     VIEW_MANAGER.createView(
       "Juego",
       () => {
-        //this.Audio[0].reproducirSonido();//AUDIO ANIMALES
         bgmusic.play();
         let puntuacion = 0;
+
         const root = document.createElement("div");
         root.className = "fondo-juego";
         const blur = document.createElement("div");
@@ -185,23 +215,46 @@ const GAME_MANAGER = new (class GameManager {
         const container = document.createElement("div");
         root.append(blur);
         blur.append(container);
-        container.className = "flex relative";
+        container.className = "game-container";
+        const canvasContainer = document.createElement("div");
+        canvasContainer.className = "canvas-container";
+        const upperContainer = document.createElement("div");
+        upperContainer.className = "upper";
         const upperRightElement = document.createElement("div");
+        const spanNombre = document.createElement("span");
+        spanNombre.className = "span-nombre";
+        spanNombre.innerText = this.user.nombre;
         const finishButton = document.createElement("button");
+        const musicbutton = document.createElement("button");
+        musicbutton.className = "btn-music";
+        finishButton.className = "btn-exit";
         finishButton.innerHTML = "Terminar juego";
+        musicbutton.innerHTML = "Musica";
+        let sound = false; //bandera
         const onFinish = () => {
           clearInterval(this.intervalID);
           clearInterval(this.timerIntervalID);
           this.intervalID = this.timerIntervalID = undefined;
           this.tiempo = 0;
+          this.animales.forEach((animal) => (animal.solucionado = false));
           bgmusic.pause();
         };
         finishButton.onclick = () => {
           onFinish();
           VIEW_MANAGER.changeToView("Intro");
         };
+        musicbutton.onclick = () => {
+          //musica alterna
+
+          if (!sound) {
+            bgmusic.play();
+            sound = true;
+          } else {
+            bgmusic.pause();
+            sound = false;
+          }
+        };
         const scoreElement = document.createElement("span");
-        upperRightElement.className = "upper-right";
         const timerElement = document.createElement("span");
         timerElement.innerHTML = `Tiempo: ${this.tiempo}`;
         if (!this.timerIntervalID) {
@@ -210,27 +263,27 @@ const GAME_MANAGER = new (class GameManager {
             timerElement.innerHTML = `Tiempo: ${this.tiempo}`;
           }, 1000);
         }
+        upperRightElement.className = "upper-right";
         upperRightElement.append(finishButton);
+        upperRightElement.append(musicbutton);
         upperRightElement.append(scoreElement);
         upperRightElement.append(timerElement);
-        container.appendChild(upperRightElement);
-
+        upperRightElement.appendChild(spanNombre);
         function renderPuntuacion() {
           scoreElement.innerText = `Puntuación: ${puntuacion}`;
         }
-
         renderPuntuacion();
         const canvas = document.createElement("canvas");
         const answerBox = document.createElement("div");
         answerBox.className = "answers";
-
+        upperContainer.appendChild(upperRightElement);
+        upperContainer.append(answerBox);
+        container.append(upperContainer);
         function isOverlapping({ x: x1, y: y1 }, { x: x2, y: y2 }) {
           return (
             x2 < x1 + 300 && x2 + 300 > x1 && y2 + 300 > y1 && y2 < y1 + 300
           );
         }
-
-        container.append(answerBox);
         // tamaño del lienzo (canvas). es distinto al tamaño real en el viewport
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -305,12 +358,27 @@ const GAME_MANAGER = new (class GameManager {
             animal.reproducirSonido();
             animal.solucionado = true;
             puntuacion += 100;
+            jsConfetti.addConfetti({
+              emojis: [animal.emoji],
+            });
             if (this.animales.every((animal) => animal.solucionado)) {
+              this.user.addPuntuacion(puntuacion, this.tiempo);
               onFinish();
-              // user.addPunutacion(puntuacion, this.tiempo)
               VIEW_MANAGER.changeToView("Felicidades");
             }
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.moveTo(animal.posicion.x, animal.posicion.y);
+            ctx.lineTo(animal.posicion.x + 300, animal.posicion.y + 300);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(animal.posicion.x + 300, animal.posicion.y);
+            ctx.lineTo(animal.posicion.x, animal.posicion.y + 300);
+            ctx.stroke();
           } else {
+            errorSound.currentTime = 1.5;
+            errorSound.play();
             puntuacion -= 50;
           }
           renderPuntuacion();
@@ -321,7 +389,8 @@ const GAME_MANAGER = new (class GameManager {
         canvas.ondragover = (event) => {
           event.preventDefault();
         };
-        container.append(canvas);
+        canvasContainer.append(canvas);
+        container.append(canvasContainer);
         return root;
       },
       { renderOnChange: true }
@@ -422,6 +491,51 @@ const GAME_MANAGER = new (class GameManager {
       },
       { renderOnChange: true }
     );
+    VIEW_MANAGER.createView("CapturaAlias", () => {
+      const root = document.createElement("div");
+
+      root.className = "w-full h-full multicolor-bg text-black";
+      root.innerHTML = `
+      <h3  class="funny-text text-white";>CAPTURA DE ALIAS</h3>
+        <br>
+        <p class="funny-text text-white">¡Bienvenido a guess-n-drag, porfavor elige tu Alias para esta partida!</p>
+        <br>        
+        `;
+      const elemento = document.createElement("div");
+      elemento.className = "alias-container";
+      const atras = document.createElement("button");
+
+      const input = document.createElement("input");
+
+      input.type = "text";
+      input.className = "form-control";
+      input.placeholder = "Alias";
+      atras.className = "capturaButton";
+      atras.innerHTML = "Regresar";
+
+      const play = document.createElement("button");
+      play.className = " capturaButton animated";
+      play.innerHTML = "Jugar";
+      elemento.appendChild(input);
+      elemento.appendChild(atras);
+      elemento.appendChild(play);
+      root.appendChild(elemento);
+
+      play.onclick = (e) => {
+        const usuario = input.value;
+        if (!usuario) {
+          alert("Por favor, elige un alias válido!");
+          return;
+        }
+        this.user = DATA_CONTROLLER.getUserData(usuario);
+        VIEW_MANAGER.changeToView("Juego");
+      };
+      atras.onclick = () => {
+        VIEW_MANAGER.changeToView("Intro");
+      };
+
+      return root;
+    });
 
     VIEW_MANAGER.createView("Felicidades", () => {
       const element = document.createElement("div");
@@ -432,7 +546,7 @@ const GAME_MANAGER = new (class GameManager {
           <div class="after"></div>
         </div>
         <div class="contenedor">
-          <h1 class="felicidades-etiqueta">¡Felicidades, has ganado!</h1>
+          <h1 class="felicidades-etiqueta">Felicidades '${this.user.nombre}', ¡ganaste!</h1>
         </div>
       `;
 
@@ -453,6 +567,7 @@ const GAME_MANAGER = new (class GameManager {
 
       return element;
     });
+
     VIEW_MANAGER.createView(
       "Intro",
       () => {
@@ -492,7 +607,7 @@ const GAME_MANAGER = new (class GameManager {
         button.className = "introButton animated";
         button.innerHTML = "Jugar"; //cambiar a captura de alias
         button.onclick = function () {
-          VIEW_MANAGER.changeToView("Juego");
+          VIEW_MANAGER.changeToView("CapturaAlias");
         };
         buttons.append(button);
 
@@ -538,14 +653,3 @@ const GAME_MANAGER = new (class GameManager {
     VIEW_MANAGER.changeToView("Intro");
   }
 })();
-
-class User {
-  constructor(nombre, puntuaciones = []) {
-    this.nombre = nombre;
-    this.puntuaciones = puntuaciones;
-  }
-
-  addPuntuacion(puntos, tiempo) {
-    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
-  }
-}
