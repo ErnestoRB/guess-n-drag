@@ -14,13 +14,17 @@ document.body.append(bgmusic);
 document.body.append(errorSound);
 
 class User {
-  constructor(nombre, puntuaciones = []) {
+  constructor(nombre, puntos = 0, tiempo = 0) {
     this.nombre = nombre;
-    this.puntuaciones = puntuaciones;
+    this.puntuacion = puntos;
+    this.tiempo = tiempo;
   }
 
-  addPuntuacion(puntos, tiempo) {
-    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
+  setPuntuacion(puntos, tiempo) {
+    if (this.tiempo == 0 || tiempo < this.tiempo) {
+      this.tiempo = tiempo;
+      this.puntuacion = puntos;
+    }
   }
 }
 
@@ -68,7 +72,7 @@ const DATA_CONTROLLER = (function () {
   }
   let ls = loadLocalStorage() || [];
 
-  ls = ls.map((item) => new User(item.nombre, item.puntuaciones));
+  ls = ls.map((item) => new User(item.nombre, item.puntuacion, item.tiempo));
 
   const object = {
     /**
@@ -106,9 +110,9 @@ const DATA_CONTROLLER = (function () {
       ls = [];
     },
     getHistorialOrdenado() {
-      return ls.forEach((user) => {
-        // user.mejorPuntuacion = user.puntuaciones
-      });
+      return ls
+        .filter((item) => item.puntuacion > 0)
+        .sort((user1, user2) => user1.tiempo - user2.tiempo);
     },
   };
 
@@ -361,11 +365,6 @@ const GAME_MANAGER = new (class GameManager {
             jsConfetti.addConfetti({
               emojis: [animal.emoji],
             });
-            if (this.animales.every((animal) => animal.solucionado)) {
-              this.user.addPuntuacion(puntuacion, this.tiempo);
-              onFinish();
-              VIEW_MANAGER.changeToView("Felicidades");
-            }
             ctx.strokeStyle = "red";
             ctx.lineWidth = 10;
             ctx.beginPath();
@@ -376,6 +375,13 @@ const GAME_MANAGER = new (class GameManager {
             ctx.moveTo(animal.posicion.x + 300, animal.posicion.y);
             ctx.lineTo(animal.posicion.x, animal.posicion.y + 300);
             ctx.stroke();
+            // si ganó, entonces reiniciar y cambiar a vista de felicidades
+            if (this.animales.every((animal) => animal.solucionado)) {
+              this.user.setPuntuacion(puntuacion, this.tiempo);
+              onFinish();
+              DATA_CONTROLLER.saveToLocalStorage();
+              VIEW_MANAGER.changeToView("Felicidades");
+            }
           } else {
             errorSound.currentTime = 1.5;
             errorSound.play();
@@ -438,17 +444,18 @@ const GAME_MANAGER = new (class GameManager {
 
         const root = document.createElement("div");
         root.className = "w-full h-full multicolor-bg text-black";
-        const historial = DATA_CONTROLLER.getHistorial();
-        let jugadores = '';
-        
+        const historial = DATA_CONTROLLER.getHistorialOrdenado();
+        let jugadores = "";
+
         if (historial) {
-          historial.forEach(item => {
+          historial.forEach((item) => {
             jugadores += `
             <div class="row">
-              <span>${'persona'}</span>
-              <span>${'2:33'}</span>
-            </div>`
-          })
+              <span>${item.nombre}</span>
+              <span>Puntos: ${item.puntuacion}</span>
+              <span>Tiempo: ${item.tiempo}</span>
+            </div>`;
+          });
         } else {
           //datos de ejemplo
           jugadores = `
@@ -468,9 +475,9 @@ const GAME_MANAGER = new (class GameManager {
                 <span>1. Juan</span>
                 <span>34:12</span>
               </div>
-            `
+            `;
         }
-        
+
         root.innerHTML = `
         <div class="container">
           <img class="img" src="./resources/images/trophy.png" alt="">
@@ -495,7 +502,7 @@ const GAME_MANAGER = new (class GameManager {
 
       root.className = "w-full h-full multicolor-bg text-black";
       root.innerHTML = `
-      <h3  class="funny-text text-white";>CAPTURA DE ALIAS</h3>
+      <h3  class="funny-text text-white captura">CAPTURA DE ALIAS</h3>
         <br>
         <p class="funny-text text-white">¡Bienvenido a guess-n-drag, porfavor elige tu Alias para esta partida!</p>
         <br>        
