@@ -430,7 +430,7 @@ const GAME_MANAGER = new (class GameManager {
         atras.innerHTML = "Regresar";
 
      const play =document.createElement("button");
-     play.className =" capturaButton ";
+     play.className =" capturaButton animated";
      play.innerHTML="Jugar";
      elemento.appendChild(input)
      elemento.appendChild(atras);
