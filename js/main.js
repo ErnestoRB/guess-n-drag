@@ -460,6 +460,20 @@ const GAME_MANAGER = new (class GameManager {
           //datos de ejemplo
           jugadores = `
             <div class="row">
+                <span>1.- Juan</span>
+                <span>333</span>
+              </div>
+              <div class="row">
+                <span>2.- Juan</span>
+                <span>300</span>
+              </div>
+              <div class="row">
+                <span>3.- Juan</span>
+                <span>290</span>
+              </div>
+              <div class="row">
+                <span>4.- Juan</span>
+                <span>250</span>
                 <span>1. Juan</span>
                 <span>34:12</span>
               </div>
@@ -489,6 +503,7 @@ const GAME_MANAGER = new (class GameManager {
               ${jugadores}
             </div>
           </div>
+          <img class="img2" src="./resources/images/medal.png" alt="">
         </div>
         `;
 
