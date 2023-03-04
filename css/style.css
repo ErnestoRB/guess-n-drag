@@ -241,7 +241,7 @@ audio {
   transition: color 0.5s ease-out;
 }
 
-.funny-text:hover {
+.hover:hover {
   color: var(--light-purple);
   cursor: pointer;
 }
@@ -378,7 +378,7 @@ audio {
 }
 
 .back-buttton {
-  background-color: #51afe5;
+  background-color: var(--base-purple);
   padding: 10px 25px;
   border: 0;
   border-radius: 10px 5px;
@@ -389,7 +389,7 @@ audio {
 }
 
 .back-buttton:hover {
-  background-color: #3a9bd3;
+  background-color: var(--light-purple);
   transform: scale(1.1);
 }
 .funny-text {
@@ -434,6 +434,7 @@ input.form-control {
   font-size: 2rem;
   display: block;
   flex: auto;
+  text-align: center;
 }
 
 .alias-container {

@@ -411,10 +411,10 @@ const GAME_MANAGER = new (class GameManager {
         <div class="creditos-container text-center">
           <h1>Bash Crashers</h1>
           <h4>Un equipo conformado por:</h4>
-          <h1 class="funny-text text-white">Paulina Lizbeth Esparza Jimenez</h1>
-          <h1 class="funny-text text-white">Ernesto Rodrigo Ramirez Briano</h1>
-          <h1 class="funny-text text-white">Karen Itzel Vazquez Reyes</h1>
-          <h1 class="funny-text text-white">Iker Jimenez Tovar</h1>
+          <h1 class="funny-text text-white hover">Paulina Lizbeth Esparza Jimenez</h1>
+          <h1 class="funny-text text-white hover">Ernesto Rodrigo Ramirez Briano</h1>
+          <h1 class="funny-text text-white hover">Karen Itzel Vazquez Reyes</h1>
+          <h1 class="funny-text text-white hover">Iker Jimenez Tovar</h1>
           <h2>Universidad Autónoma de Aguascalientes</h2>
           <h3>Ingeniería en Sistemas Computacionales 6°B</h3>
           <h4>Un proyecto hecho para la materia de Tecnologías Web</h4>
@@ -479,7 +479,7 @@ const GAME_MANAGER = new (class GameManager {
         }
 
         root.innerHTML = `
-        <div class="container">
+        <div class="container multicolor-bg">
           <img class="img" src="./resources/images/trophy.png" alt="">
           <div class="card">
             <div class="card-header">
@@ -504,7 +504,7 @@ const GAME_MANAGER = new (class GameManager {
       root.innerHTML = `
       <h3  class="funny-text text-white captura">CAPTURA DE ALIAS</h3>
         <br>
-        <p class="funny-text text-white">¡Bienvenido a guess-n-drag, porfavor elige tu Alias para esta partida!</p>
+        <p class="funny-text text-black">¡Hola! Antes de jugar dinos como te llamas</p>
         <br>        
         `;
       const elemento = document.createElement("div");
@@ -516,7 +516,7 @@ const GAME_MANAGER = new (class GameManager {
       input.type = "text";
       input.className = "form-control";
       input.placeholder = "Alias";
-      atras.className = "capturaButton";
+      atras.className = "capturaButton introButton";
       atras.innerHTML = "Regresar";
 
       const play = document.createElement("button");
@@ -552,7 +552,7 @@ const GAME_MANAGER = new (class GameManager {
           <div class="after"></div>
         </div>
         <div class="contenedor">
-          <h1 class="felicidades-etiqueta">Felicidades '${this.user.nombre}', ¡ganaste!</h1>
+          <h1 class="felicidades-etiqueta">Felicidades, ${this.user.nombre}. ¡Ganaste!</h1>
         </div>
       `;
 
