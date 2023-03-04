@@ -14,13 +14,17 @@ document.body.append(bgmusic);
 document.body.append(errorSound);
 
 class User {
-  constructor(nombre, puntuaciones = []) {
+  constructor(nombre, puntos = 0, tiempo = 0) {
     this.nombre = nombre;
-    this.puntuaciones = puntuaciones;
+    this.puntuacion = puntos;
+    this.tiempo = tiempo;
   }
 
-  addPuntuacion(puntos, tiempo) {
-    this.puntuaciones.push({ puntos, duracion: tiempo, fecha: Date.now() });
+  setPuntuacion(puntos, tiempo) {
+    if (this.tiempo == 0 || tiempo < this.tiempo) {
+      this.tiempo = tiempo;
+      this.puntuacion = puntos;
+    }
   }
 }
 
@@ -68,7 +72,7 @@ const DATA_CONTROLLER = (function () {
   }
   let ls = loadLocalStorage() || [];
 
-  ls = ls.map((item) => new User(item.nombre, item.puntuaciones));
+  ls = ls.map((item) => new User(item.nombre, item.puntuacion, item.tiempo));
 
   const object = {
     /**
@@ -106,9 +110,9 @@ const DATA_CONTROLLER = (function () {
       ls = [];
     },
     getHistorialOrdenado() {
-      return ls.forEach((user) => {
-        // user.mejorPuntuacion = user.puntuaciones
-      });
+      return ls
+        .filter((item) => item.puntuacion > 0)
+        .sort((user1, user2) => user1.tiempo - user2.tiempo);
     },
   };
 
@@ -361,11 +365,6 @@ const GAME_MANAGER = new (class GameManager {
             jsConfetti.addConfetti({
               emojis: [animal.emoji],
             });
-            if (this.animales.every((animal) => animal.solucionado)) {
-              this.user.addPuntuacion(puntuacion, this.tiempo);
-              onFinish();
-              VIEW_MANAGER.changeToView("Felicidades");
-            }
             ctx.strokeStyle = "red";
             ctx.lineWidth = 10;
             ctx.beginPath();
@@ -376,6 +375,13 @@ const GAME_MANAGER = new (class GameManager {
             ctx.moveTo(animal.posicion.x + 300, animal.posicion.y);
             ctx.lineTo(animal.posicion.x, animal.posicion.y + 300);
             ctx.stroke();
+            // si ganó, entonces reiniciar y cambiar a vista de felicidades
+            if (this.animales.every((animal) => animal.solucionado)) {
+              this.user.setPuntuacion(puntuacion, this.tiempo);
+              onFinish();
+              DATA_CONTROLLER.saveToLocalStorage();
+              VIEW_MANAGER.changeToView("Felicidades");
+            }
           } else {
             errorSound.currentTime = 1.5;
             errorSound.play();
@@ -405,10 +411,10 @@ const GAME_MANAGER = new (class GameManager {
         <div class="creditos-container text-center">
           <h1>Bash Crashers</h1>
           <h4>Un equipo conformado por:</h4>
-          <h1 class="funny-text text-white">Paulina Lizbeth Esparza Jimenez</h1>
-          <h1 class="funny-text text-white">Ernesto Rodrigo Ramirez Briano</h1>
-          <h1 class="funny-text text-white">Karen Itzel Vazquez Reyes</h1>
-          <h1 class="funny-text text-white">Iker Jimenez Tovar</h1>
+          <h1 class="funny-text text-white hover">Paulina Lizbeth Esparza Jimenez</h1>
+          <h1 class="funny-text text-white hover">Ernesto Rodrigo Ramirez Briano</h1>
+          <h1 class="funny-text text-white hover">Karen Itzel Vazquez Reyes</h1>
+          <h1 class="funny-text text-white hover">Iker Jimenez Tovar</h1>
           <h2>Universidad Autónoma de Aguascalientes</h2>
           <h3>Ingeniería en Sistemas Computacionales 6°B</h3>
           <h4>Un proyecto hecho para la materia de Tecnologías Web</h4>
@@ -438,18 +444,18 @@ const GAME_MANAGER = new (class GameManager {
 
         const root = document.createElement("div");
         root.className = "w-full h-full multicolor-bg text-black";
-        const historial = DATA_CONTROLLER.getHistorial();
-        let jugadores = '';
-        
+        const historial = DATA_CONTROLLER.getHistorialOrdenado();
+        let jugadores = "";
+
         if (historial) {
-          for(let i=0; i<historial.length; i++){
+          historial.forEach((item) => {
             jugadores += `
             <div class="row">
-              <span>${i+1 + '.- ' + historial[i]?.nombre}</span>
-              <span>${historial[i]?.puntuaciones[0]}</span>
-            </div>`
-          }
-
+              <span>${item.nombre}</span>
+              <span>Puntos: ${item.puntuacion}</span>
+              <span>Tiempo: ${item.tiempo}</span>
+            </div>`;
+          });
         } else {
           //datos de ejemplo
           jugadores = `
@@ -483,15 +489,15 @@ const GAME_MANAGER = new (class GameManager {
                 <span>1. Juan</span>
                 <span>34:12</span>
               </div>
-            `
+            `;
         }
-        
+
         root.innerHTML = `
-        <div class="container">
+        <div class="container multicolor-bg">
           <img class="img" src="./resources/images/trophy.png" alt="">
           <div class="card">
             <div class="card-header">
-              <h2>Top Scores</h2>
+              <h2>Mejores puntuaciones</h2>
             </div>
             <div class="card-body">
               ${jugadores}
@@ -511,9 +517,9 @@ const GAME_MANAGER = new (class GameManager {
 
       root.className = "w-full h-full multicolor-bg text-black";
       root.innerHTML = `
-      <h3  class="funny-text text-white";>CAPTURA DE ALIAS</h3>
+      <h3  class="funny-text text-white captura">CAPTURA DE ALIAS</h3>
         <br>
-        <p class="funny-text text-white">¡Bienvenido a guess-n-drag, porfavor elige tu Alias para esta partida!</p>
+        <p class="funny-text text-black">¡Hola! Antes de jugar dinos como te llamas</p>
         <br>        
         `;
       const elemento = document.createElement("div");
@@ -525,7 +531,7 @@ const GAME_MANAGER = new (class GameManager {
       input.type = "text";
       input.className = "form-control";
       input.placeholder = "Alias";
-      atras.className = "capturaButton";
+      atras.className = "capturaButton introButton";
       atras.innerHTML = "Regresar";
 
       const play = document.createElement("button");
@@ -561,7 +567,7 @@ const GAME_MANAGER = new (class GameManager {
           <div class="after"></div>
         </div>
         <div class="contenedor">
-          <h1 class="felicidades-etiqueta">Felicidades '${this.user.nombre}', ¡ganaste!</h1>
+          <h1 class="felicidades-etiqueta">Felicidades, ${this.user.nombre}. ¡Ganaste!</h1>
         </div>
       `;
 
