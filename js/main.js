@@ -449,6 +449,7 @@ const GAME_MANAGER = new (class GameManager {
               <span>${historial[i]?.puntuaciones[0]}</span>
             </div>`
           }
+
         } else {
           //datos de ejemplo
           jugadores = `
@@ -467,6 +468,20 @@ const GAME_MANAGER = new (class GameManager {
               <div class="row">
                 <span>4.- Juan</span>
                 <span>250</span>
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
+              </div>
+              <div class="row">
+                <span>1. Juan</span>
+                <span>34:12</span>
               </div>
             `
         }

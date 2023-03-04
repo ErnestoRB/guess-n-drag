@@ -315,6 +315,7 @@ audio {
   justify-content: center;
   align-items: center;
   background-color: #319caf;
+
 }
 
 .card {
@@ -387,6 +388,7 @@ audio {
 .img2:hover {
   transition: all 0.65s;
   transform: rotateY(360deg);
+
 }
 
 .back-container {
